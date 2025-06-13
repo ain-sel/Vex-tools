@@ -321,27 +321,6 @@ namespace Vex.Library.Package
             }
         }
 
-        public void ExportVoidAnimation(Asset asset, VexInstance instance)
-        {
-            var bytes = ExtractEntryBytes(asset, instance);
-
-            //Definitely need a null check here
-            var compressedAnimation = VoidAnimation.AnimationUtils.ExtractAnimation(bytes, instance.Game == SupportedGames.Dishonored2, out var skeletonName);
-            var SkeletonBytes = ExtractEntryBytes(GetEntryFromName(skeletonName), instance);
-            //ModelHelper.BuildVoidSkeleton would also work here
-            var Skeleton = VoidSkeletonHelper.BuildVoidSkeleton(SkeletonBytes, instance.Game == SupportedGames.Dishonored2);
-            var animation = VoidAnimation.AnimationUtils.GetAnimationFromCompressed(compressedAnimation, Skeleton);
-
-            //This one line of code fixes every issue I've had with animations...
-            //I've never felt so stupid
-            animation.SkeletonAnimation.ScaleAnimation(100.0f);
-
-            var animationName = Path.GetFileNameWithoutExtension(asset.Destination);
-            var dir = Path.Combine(instance.ExportFolder, instance.GetGameName(), "Animations");
-            Directory.CreateDirectory(dir);
-            ExportManager.ExportAnimation(animation, dir, animationName, instance);
-        }
-
         public List<Asset> GetEntriesFromName(string match)
         {
             var ImageEntries = Containers.SelectMany(c => c.Entries)
